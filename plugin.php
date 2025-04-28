@@ -73,22 +73,19 @@ class Todo_App_Plugin {
             );
         }
 
-        // Remove CSS enqueue logic as there is no CSS file in the build
-        // Previously enqueued CSS logic has been removed.
-
-        // Add inline script to initialize the React app - using direct DOM manipulation instead of ReactDOM.createRoot
+        // Add inline script to initialize the React app
         wp_add_inline_script(
             'todo-app-script',
             "document.addEventListener('DOMContentLoaded', function() {
                 var adminRoot = document.getElementById('todo-app-root');
                 var pageRoot = document.getElementById('todo-app');
                 
-                if (adminRoot) {
-                    ReactDOM.render(React.createElement(Ih), adminRoot);
+                if (adminRoot && window.TodoApp) {
+                    ReactDOM.render(React.createElement(TodoApp.App), adminRoot);
                 }
                 
-                if (pageRoot) {
-                    ReactDOM.render(React.createElement(Ih), pageRoot);
+                if (pageRoot && window.TodoApp) {
+                    ReactDOM.render(React.createElement(TodoApp.App), pageRoot);
                 }
             });"
         );

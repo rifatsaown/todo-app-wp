@@ -24,5 +24,9 @@ export default defineConfig({
         entryFileNames: 'index.js',
       },
     },
+    outDir: 'dist',
+    assetsDir: '',
+    sourcemap: false,
+    minify: false,
   },
 });
