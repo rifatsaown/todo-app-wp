@@ -47,39 +47,51 @@ class Todo_App_Plugin {
      * Enqueue scripts and styles
      */
     public function enqueue_scripts($hook) {
-        // Only load on our plugin page
-        if ($hook !== 'toplevel_page_todo-app') {
-            return;
-        }
-
         // Get the plugin directory URL
-        $plugin_dir = plugin_dir_path(__FILE__);
         $plugin_url = plugin_dir_url(__FILE__);
 
+        // Enqueue WordPress's React and ReactDOM
+        wp_enqueue_script('react');
+        wp_enqueue_script('react-dom');
+
+        // Add inline script to expose React and ReactDOM globally
+        wp_add_inline_script(
+            'react',
+            "window.React = React; window.ReactDOM = ReactDOM;"
+        );
+
         // Locate the JavaScript file
-        $js_files = glob($plugin_dir . 'frontend/dist/assets/*.js');
+        $js_files = glob(plugin_dir_path(__FILE__) . 'frontend/dist/*.js');
         if (!empty($js_files)) {
             $js_file = basename($js_files[0]);
             wp_enqueue_script(
                 'todo-app-script',
-                $plugin_url . 'frontend/dist/assets/' . $js_file,
-                array(),
+                $plugin_url . 'frontend/dist/' . $js_file,
+                ['react', 'react-dom'], // Add React and ReactDOM as dependencies
                 '1.0.0',
                 true
             );
         }
 
-        // Locate the CSS file
-        $css_files = glob($plugin_dir . 'frontend/dist/assets/*.css');
-        if (!empty($css_files)) {
-            $css_file = basename($css_files[0]);
-            wp_enqueue_style(
-                'todo-app-style',
-                $plugin_url . 'frontend/dist/assets/' . $css_file,
-                array(),
-                '1.0.0'
-            );
-        }
+        // Remove CSS enqueue logic as there is no CSS file in the build
+        // Previously enqueued CSS logic has been removed.
+
+        // Add inline script to initialize the React app - using direct DOM manipulation instead of ReactDOM.createRoot
+        wp_add_inline_script(
+            'todo-app-script',
+            "document.addEventListener('DOMContentLoaded', function() {
+                var adminRoot = document.getElementById('todo-app-root');
+                var pageRoot = document.getElementById('todo-app');
+                
+                if (adminRoot) {
+                    ReactDOM.render(React.createElement(Ih), adminRoot);
+                }
+                
+                if (pageRoot) {
+                    ReactDOM.render(React.createElement(Ih), pageRoot);
+                }
+            });"
+        );
     }
 
     /**
@@ -102,29 +114,20 @@ function todo_app_wp_enqueue_assets() {
     $plugin_url = plugin_dir_url(__FILE__);
 
     // Locate the JavaScript file
-    $js_files = glob($plugin_dir . 'frontend/dist/assets/*.js');
+    $js_files = glob($plugin_dir . 'frontend/dist/*.js');
     if (!empty($js_files)) {
         $js_file = basename($js_files[0]);
         wp_enqueue_script(
             'todo-app-wp-js',
-            $plugin_url . 'frontend/dist/assets/' . $js_file,
+            $plugin_url . 'frontend/dist/' . $js_file,
             [],
             '1.0.0',
             true
         );
     }
 
-    // Locate the CSS file
-    $css_files = glob($plugin_dir . 'frontend/dist/assets/*.css');
-    if (!empty($css_files)) {
-        $css_file = basename($css_files[0]);
-        wp_enqueue_style(
-            'todo-app-wp-css',
-            $plugin_url . 'frontend/dist/assets/' . $css_file,
-            [],
-            '1.0.0'
-        );
-    }
+    // Remove CSS enqueue logic as there is no CSS file in the build
+    // Previously enqueued CSS logic has been removed.
 }
 add_action('wp_enqueue_scripts', 'todo_app_wp_enqueue_assets');
 
