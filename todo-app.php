@@ -3,7 +3,7 @@
  * Plugin Name: Todo APP
  * Description: Integrates a Vite-React Todo APP application
  * Version: 1.0.0
- * Author: Your Name
+ * Author: Md Rifat Hossen Saown
  * License: GPL v2 or later
  */
 
@@ -29,7 +29,7 @@ function todoapp_add_menu() {
 }
 
 /**
- * Enqueue scripts and styles
+ * Enqueue scripts
  */
 function todoapp_enqueue_scripts($hook) {
     // Only load on our plugin's admin page
