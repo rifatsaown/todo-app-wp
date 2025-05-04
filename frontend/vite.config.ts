@@ -13,20 +13,21 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      external: ['react', 'react-dom'],
       output: {
-        globals: {
-          react: 'React',
-          'react-dom': 'ReactDOM',
-        },
         format: 'iife',
         name: 'TodoApp',
         entryFileNames: 'index.js',
       },
     },
-    outDir: 'dist',
-    assetsDir: '',
-    sourcemap: false,
-    minify: false,
+  },
+  server: {
+    cors: {
+      origin: 'http://plugintest.local',
+      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+      credentials: true,
+    },
+    host: '0.0.0.0',
+    port: 5173,
   },
 });
